@@ -135,6 +135,7 @@ from PyQt5 import uic, QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
+filterDialog = uic.loadUiType("filterdialog.ui")[0]
 running = True
 count = 1
 
@@ -145,7 +146,12 @@ class MyWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.start()
 
+        self.dialog = DialogWindow()
         self.saveButton.clicked.connect(self.save_changed)
+        self.changeButton.clicked.connect(self.dialog_open)
+
+    def dialog_open(self):
+        self.dialog.show()
 
     def save_changed(self, arg1):
         global count
@@ -182,8 +188,6 @@ class MyWindow(QMainWindow, form_class):
                 self.originalVideo.setPixmap(pixmap)
                 self.changedVideo.setPixmap(pixmap2)
 
-
-
             else:
                 QtWidgets.QMessageBox.about(self.window(), "Error", "Cannot read frame.")
                 print("cannot read frame.")
@@ -204,6 +208,14 @@ class MyWindow(QMainWindow, form_class):
         global running
         running = False
         print("stop")
+
+
+class DialogWindow(QDialog, filterDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    
 
 
 if __name__ == "__main__":
