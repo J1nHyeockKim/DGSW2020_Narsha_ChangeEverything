@@ -131,13 +131,12 @@ transformer.load_weights(basepath + 'transformer_1.h5')
 import sys
 import threading
 import cv2
-import errno
-import os
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
 running = True
+count = 1
 
 
 class MyWindow(QMainWindow, form_class):
@@ -149,13 +148,17 @@ class MyWindow(QMainWindow, form_class):
         self.saveButton.clicked.connect(self.save_changed)
 
     def save_changed(self, arg1):
+        global count
         # print(arg1)
         img = cv2.cvtColor(self.img_result, cv2.COLOR_BGR2RGB)
-
-        cv2.imwrite('save/changed.jpg', img)
+        filename = 'save/changed{}.jpg'.format(count)
+        print(filename)
+        cv2.imwrite(filename, img)
+        count += 1
 
     def run(self):
         global running
+
         cap = cv2.VideoCapture(0)
         cap.set(3, 960)
         cap.set(4, 540)
@@ -178,6 +181,9 @@ class MyWindow(QMainWindow, form_class):
 
                 self.originalVideo.setPixmap(pixmap)
                 self.changedVideo.setPixmap(pixmap2)
+
+
+
             else:
                 QtWidgets.QMessageBox.about(self.window(), "Error", "Cannot read frame.")
                 print("cannot read frame.")
