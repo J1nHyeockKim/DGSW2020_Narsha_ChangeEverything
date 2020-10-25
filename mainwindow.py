@@ -1,14 +1,6 @@
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
-from tensorflow.keras.applications import vgg16, VGG16
-import glob
-import random
-import numpy as np
-import matplotlib.pyplot as plt
-
-import sys
-
-from PIL import Image
 from tensorflow_addons.layers import InstanceNormalization
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -131,7 +123,7 @@ transformer.load_weights(basepath + 'transformer_1.h5')
 import sys
 import threading
 import cv2
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
+from PyQt5 import uic, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
