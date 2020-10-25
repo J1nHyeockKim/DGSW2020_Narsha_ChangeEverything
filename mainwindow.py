@@ -1,4 +1,5 @@
 import tensorflow as tf
+from PyQt5.QtGui import QStandardItemModel
 from tensorflow.keras import layers
 from tensorflow.keras.applications import vgg16, VGG16
 import glob
@@ -122,11 +123,12 @@ transformer = TransformerNet()
 transformer.build((None, None, None, 3))
 
 basepath = 'filter/'
+filter_name = 'transformer_1.h5'
 # 전처리 끝
 
 
 # 이게 필터 불러오는 코드
-transformer.load_weights(basepath + 'transformer_1.h5')
+transformer.load_weights(basepath + filter_name)
 
 import sys
 import os
@@ -134,11 +136,38 @@ import threading
 import cv2
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QPixmap
 
 form_class = uic.loadUiType("mainwindow.ui")[0]
 filterDialog = uic.loadUiType("filterdialog.ui")[0]
+image_class = uic.loadUiType("image_dialog.ui")[0]
 running = True
 count = 1
+DIR_PATH = 'save/'
+
+
+class ImageWindow(QDialog, image_class):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.start()
+
+    def start(self):
+        imagFile_list = os.listdir(DIR_PATH)
+
+        # ListWidget 생성
+        for item in imagFile_list: self.imageListWidget.addItem(item)
+        self.imageListWidget.itemClicked.connect(self.chkItemClicked)
+
+    def chkItemClicked(self):
+        imgfile = DIR_PATH + self.imageListWidget.currentItem().text()
+
+        wh = self.selectImg.size()
+        self.pixmap = QtGui.QPixmap(imgfile)
+        self.pixmap.scaled(self.selectImg.size())
+        self.pixmap.load(imgfile)
+        self.pixmap = self.pixmap.scaledToWidth(wh.width())
+        self.selectImg.setPixmap(QtGui.QPixmap(self.pixmap))
 
 
 class MyWindow(QMainWindow, form_class):
@@ -148,9 +177,9 @@ class MyWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.start()
 
-        self.dialog = DialogWindow()
         self.saveButton.clicked.connect(self.save_changed)
         self.changeButton.clicked.connect(self.dialog_open)
+        self.loadButton.clicked.connect(self.ImageDialog)
 
         save_path = "save/"
         file_list = os.listdir(save_path)
@@ -162,7 +191,9 @@ class MyWindow(QMainWindow, form_class):
             count = int(fileString[-1]) + 1
 
     def dialog_open(self):
-        self.dialog.show()
+        self.dialog = DialogWindow()
+        self.dialog.exec_()
+        self.selected = self.dialog.selectedItems
 
     def save_changed(self, arg1):
         global count
@@ -172,6 +203,10 @@ class MyWindow(QMainWindow, form_class):
         print(filename)
         cv2.imwrite(filename, img)
         count += 1
+
+    def ImageDialog(self):
+        self.imageDialog = ImageWindow()
+        self.imageDialog.show()
 
     def run(self):
         global running
@@ -225,6 +260,29 @@ class DialogWindow(QDialog, filterDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        list = ['transformer_1.h5', 'transformer_2.h5', 'transformer_3.h5', 'transformer_4.h5', 'transformer_5.h5',
+                'transformer_6.h5', 'transformer_7.h5', 'transformer_9.h5', 'transformer_10.h5', 'transformer_11.h5',
+                'transformer_12.h5', 'transformer_13.h5', 'transformer_14.h5', 'transformer_15.h5', 'transformer_16.h5',]
+
+        for item in list:
+            listitem = QListWidgetItem(item)
+            self.listWidget.addItem(listitem)
+
+        self.selectedItems = None
+
+        self.okButton.clicked.connect(self.ok)
+        self.cancelButton.clicked.connect(self.cancel)
+
+    def ok(self):
+        global filter_name
+        self.selectedItems = self.listWidget.currentItem().text()
+        filter_name = self.selectedItems
+        transformer.load_weights(basepath + filter_name)
+        self.close()
+
+    def cancel(self):
+        self.close()
 
 
 if __name__ == "__main__":
