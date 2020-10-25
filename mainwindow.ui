@@ -46,25 +46,12 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="faceButton">
-    <property name="geometry">
-     <rect>
-      <x>1720</x>
-      <y>160</y>
-      <width>190</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>얼굴 바꾸기</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="filterButton">
+   <widget class="QPushButton" name="changeButton">
     <property name="geometry">
      <rect>
       <x>1520</x>
-      <y>160</y>
-      <width>190</width>
+      <y>80</y>
+      <width>391</width>
       <height>50</height>
      </rect>
     </property>
@@ -114,8 +101,8 @@
     <property name="geometry">
      <rect>
       <x>1520</x>
-      <y>100</y>
-      <width>390</width>
+      <y>20</y>
+      <width>191</width>
       <height>50</height>
      </rect>
     </property>
@@ -123,14 +110,17 @@
      <string>저장하기</string>
     </property>
    </widget>
-   <widget class="QListView" name="listView">
+   <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1500</width>
-      <height>200</height>
+      <x>1720</x>
+      <y>20</y>
+      <width>191</width>
+      <height>51</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>불러오기</string>
     </property>
    </widget>
   </widget>
