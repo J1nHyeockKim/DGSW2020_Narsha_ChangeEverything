@@ -129,6 +129,7 @@ basepath = 'filter/'
 transformer.load_weights(basepath + 'transformer_1.h5')
 
 import sys
+import os
 import threading
 import cv2
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
@@ -142,6 +143,7 @@ count = 1
 
 class MyWindow(QMainWindow, form_class):
     def __init__(self):
+        global count
         super().__init__()
         self.setupUi(self)
         self.start()
@@ -149,6 +151,15 @@ class MyWindow(QMainWindow, form_class):
         self.dialog = DialogWindow()
         self.saveButton.clicked.connect(self.save_changed)
         self.changeButton.clicked.connect(self.dialog_open)
+
+        save_path = "save/"
+        file_list = os.listdir(save_path)
+
+        if not file_list:
+            count = 1
+        else:
+            fileString = os.path.splitext(file_list[-1])[0]
+            count = int(fileString[-1]) + 1
 
     def dialog_open(self):
         self.dialog.show()
@@ -214,8 +225,6 @@ class DialogWindow(QDialog, filterDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
-    
 
 
 if __name__ == "__main__":
