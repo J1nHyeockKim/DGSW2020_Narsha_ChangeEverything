@@ -6,21 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>754</height>
+    <width>860</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(0, 0, 0);
-color: rgb(255, 255, 255);</string>
+   <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(40, 40, 40);</string>
   </property>
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
-     <x>630</x>
+     <x>645</x>
      <y>710</y>
      <width>93</width>
      <height>28</height>
@@ -39,7 +39,7 @@ color: rgb(255, 255, 255);</string>
   <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>730</x>
+     <x>748</x>
      <y>710</y>
      <width>93</width>
      <height>28</height>
@@ -60,9 +60,12 @@ color: rgb(255, 255, 255);</string>
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>800</width>
+     <width>820</width>
      <height>670</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
   </widget>
  </widget>
