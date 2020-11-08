@@ -73,7 +73,7 @@ background-color: rgb(40, 40, 40);</string>
     </property>
     <property name="font">
      <font>
-      <family>Jaapokki subtract</family>
+      <family>210 구름고딕OTF 070</family>
       <pointsize>28</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -94,15 +94,17 @@ FILTER</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>210</y>
+      <y>209</y>
       <width>170</width>
-      <height>30</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <family>Jaapokki subtract</family>
+      <family>210 구름고딕OTF 070</family>
       <pointsize>20</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -115,12 +117,12 @@ FILTER</string>
       <x>970</x>
       <y>210</y>
       <width>180</width>
-      <height>30</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <family>Jaapokki subtract</family>
+      <family>210 구름고딕OTF 070</family>
       <pointsize>20</pointsize>
      </font>
     </property>
@@ -139,7 +141,7 @@ FILTER</string>
     </property>
     <property name="font">
      <font>
-      <family>Jaapokki subtract</family>
+      <family>210 M고딕OTF 070</family>
       <pointsize>28</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -166,7 +168,7 @@ FILTER</string>
     </property>
     <property name="font">
      <font>
-      <family>Jaapokki subtract</family>
+      <family>210 구름고딕OTF 070</family>
       <pointsize>28</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -182,6 +184,66 @@ FILTER</string>
      <string>LOAD IMG</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>160</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../Downloads/KakaoTalk_20201108_114524907_.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>60</y>
+      <width>841</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>배달의민족 도현</family>
+      <pointsize>45</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>무엇이든</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>60</y>
+      <width>461</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>배달의민족 도현</family>
+      <pointsize>45</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>바꿔드립니다</string>
+    </property>
+   </widget>
    <zorder>loadButton</zorder>
    <zorder>originalVideo</zorder>
    <zorder>changedVideo</zorder>
@@ -189,6 +251,9 @@ FILTER</string>
    <zorder>text</zorder>
    <zorder>text2</zorder>
    <zorder>saveButton</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+   <zorder>label_3</zorder>
   </widget>
  </widget>
  <resources/>

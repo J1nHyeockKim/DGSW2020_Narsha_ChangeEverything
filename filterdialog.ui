@@ -28,7 +28,7 @@ background-color: rgb(40, 40, 40);</string>
    </property>
    <property name="font">
     <font>
-     <family>Jaapokki subtract</family>
+     <family>210 구름고딕OTF 070</family>
      <pointsize>12</pointsize>
     </font>
    </property>
@@ -47,7 +47,7 @@ background-color: rgb(40, 40, 40);</string>
    </property>
    <property name="font">
     <font>
-     <family>Jaapokki subtract</family>
+     <family>210 구름고딕OTF 070</family>
      <pointsize>12</pointsize>
     </font>
    </property>
@@ -63,6 +63,11 @@ background-color: rgb(40, 40, 40);</string>
      <width>820</width>
      <height>670</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
