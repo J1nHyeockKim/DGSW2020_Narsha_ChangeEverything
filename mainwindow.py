@@ -1,15 +1,7 @@
-import tensorflow as tf
-from PyQt5.QtGui import QStandardItemModel
-from tensorflow.keras import layers
-from tensorflow.keras.applications import vgg16, VGG16
-import glob
-import random
 import numpy as np
-import matplotlib.pyplot as plt
-
-import sys
-
-from PIL import Image
+import tensorflow as tf
+import torch
+from tensorflow.keras import layers
 from tensorflow_addons.layers import InstanceNormalization
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -123,6 +115,7 @@ transformer = TransformerNet()
 transformer.build((None, None, None, 3))
 
 basepath = 'filter/'
+facebasepath = 'fsgan/docs/examples/'
 filter_name = 'transformer_1.h5'
 # 전처리 끝
 
@@ -134,7 +127,9 @@ import sys
 import os
 import threading
 import cv2
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
+import facefilter
+
+from PyQt5 import uic, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap
 
@@ -144,6 +139,8 @@ image_class = uic.loadUiType("image_dialog.ui")[0]
 running = True
 count = 1
 DIR_PATH = 'save/'
+check = '.h5'
+image_model = facefilter.model
 
 
 class ImageWindow(QDialog, image_class):
@@ -163,11 +160,11 @@ class ImageWindow(QDialog, image_class):
         imgfile = DIR_PATH + self.imageListWidget.currentItem().text()
 
         wh = self.selectImg.size()
-        self.pixmap = QtGui.QPixmap(imgfile)
+        self.pixmap = QPixmap(imgfile)
         self.pixmap.scaled(self.selectImg.size())
         self.pixmap.load(imgfile)
         self.pixmap = self.pixmap.scaledToWidth(wh.width())
-        self.selectImg.setPixmap(QtGui.QPixmap(self.pixmap))
+        self.selectImg.setPixmap(QPixmap(self.pixmap))
 
 
 class MyWindow(QMainWindow, form_class):
@@ -176,6 +173,8 @@ class MyWindow(QMainWindow, form_class):
         super().__init__()
         self.setupUi(self)
         self.start()
+
+        self.image_model = image_model
 
         self.saveButton.clicked.connect(self.save_changed)
         self.changeButton.clicked.connect(self.dialog_open)
@@ -191,22 +190,63 @@ class MyWindow(QMainWindow, form_class):
             count = int(fileString[-1]) + 1
 
     def dialog_open(self):
+        print("dialog!")
         self.dialog = DialogWindow()
+        print("exec!")
         self.dialog.exec_()
+        print("selected")
         self.selected = self.dialog.selectedItems
 
     def save_changed(self, arg1):
         global count
-        # print(arg1)
         img = cv2.cvtColor(self.img_result, cv2.COLOR_BGR2RGB)
         filename = 'save/changed{}.jpg'.format(count)
-        print(filename)
         cv2.imwrite(filename, img)
         count += 1
+
+        QtWidgets.QMessageBox.information(self, "저장 완료", filename + "로 저장되었습니다.")
 
     def ImageDialog(self):
         self.imageDialog = ImageWindow()
         self.imageDialog.show()
+
+    def backImgFilter(self, img):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        h, w, c = img.shape
+
+        np_image = np.array(img).copy().astype('float32') / 127.5 - 1
+
+        self.img_result = transformer.predict(np_image[tf.newaxis, :, :, :])[0].astype('uint8')
+
+        qImg = QtGui.QImage(img.data, w, h, w * c, QtGui.QImage.Format_RGB888)
+        qImg2 = QtGui.QImage(self.img_result.data, w, h, w * c, QtGui.QImage.Format_RGB888)
+
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+        pixmap2 = QtGui.QPixmap.fromImage(qImg2)
+
+        self.originalVideo.setPixmap(pixmap)
+        self.changedVideo.setPixmap(pixmap2)
+
+    def faceFilter(self, img):
+        #
+        h, w, c = img.shape
+
+        np_image = np.array(img).copy()
+
+        with torch.no_grad():
+            self.img_result = self.image_model(np_image)
+        #self.img_result = cv2.cvtColor(self.img_result, cv2.COLOR_BGR2RGB)
+        torch.cuda.empty_cache()
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        qImg = QtGui.QImage(img.data, w, h, w * c, QtGui.QImage.Format_RGB888)
+        qImg2 = QtGui.QImage(self.img_result.data, w, h, w*c, QtGui.QImage.Format_RGB888)
+
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+        pixmap2 = QtGui.QPixmap.fromImage(qImg2)
+
+        self.originalVideo.setPixmap(pixmap)
+        self.changedVideo.setPixmap(pixmap2)
 
     def run(self):
         global running
@@ -218,22 +258,10 @@ class MyWindow(QMainWindow, form_class):
         while running:
             ret, img = cap.read()
             if ret:
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                h, w, c = img.shape
-
-                np_image = np.array(img).copy().astype('float32') / 127.5 - 1
-
-                self.img_result = transformer.predict(np_image[tf.newaxis, :, :, :])[0].astype('uint8')
-
-                qImg = QtGui.QImage(img.data, w, h, w * c, QtGui.QImage.Format_RGB888)
-                qImg2 = QtGui.QImage(self.img_result.data, w, h, w * c, QtGui.QImage.Format_RGB888)
-
-                pixmap = QtGui.QPixmap.fromImage(qImg)
-                pixmap2 = QtGui.QPixmap.fromImage(qImg2)
-
-                self.originalVideo.setPixmap(pixmap)
-                self.changedVideo.setPixmap(pixmap2)
-
+                if check == '.h5':
+                    self.backImgFilter(img)
+                elif check == '.mp4':
+                    self.faceFilter(img)
             else:
                 QtWidgets.QMessageBox.about(self.window(), "Error", "Cannot read frame.")
                 print("cannot read frame.")
@@ -261,11 +289,16 @@ class DialogWindow(QDialog, filterDialog):
         super().__init__()
         self.setupUi(self)
 
-        list = ['transformer_1.h5', 'transformer_2.h5', 'transformer_3.h5', 'transformer_4.h5', 'transformer_5.h5',
-                'transformer_6.h5', 'transformer_7.h5', 'transformer_9.h5', 'transformer_10.h5', 'transformer_11.h5',
-                'transformer_12.h5', 'transformer_13.h5', 'transformer_14.h5', 'transformer_15.h5', 'transformer_16.h5',]
 
-        for item in list:
+        filter_list = ['transformer_1.h5', 'transformer_2.h5', 'transformer_3.h5', 'transformer_4.h5',
+                       'transformer_5.h5', 'transformer_6.h5', 'transformer_7.h5', 'transformer_9.h5',
+                       'transformer_10.h5', 'transformer_11.h5', 'transformer_12.h5', 'transformer_13.h5',
+                       'transformer_14.h5', 'transformer_15.h5', 'transformer_16.h5', 'transformer_18.h5',
+                       'transformer_19.h5', 'transformer_20.h5', 'transformer_21.h5',
+                       'moon.mp4', 'shinzo_abe.mp4', 'trump.mp4', 'V.mp4', 'xijinping.mp4', '슈가.mp4',
+                       '여동민.mp4', '허경영.mp4']
+
+        for item in filter_list:
             listitem = QListWidgetItem(item)
             self.listWidget.addItem(listitem)
 
@@ -276,13 +309,33 @@ class DialogWindow(QDialog, filterDialog):
 
     def ok(self):
         global filter_name
+        global check
         self.selectedItems = self.listWidget.currentItem().text()
         filter_name = self.selectedItems
-        transformer.load_weights(basepath + filter_name)
-        self.close()
+        check = os.path.splitext(filter_name)[1]
+
+
+        if check == '.h5':
+            transformer.load_weights(basepath + filter_name)
+            try:
+                self.close()
+            except Exception as e:
+                print("exception occured")
+                print(e)
+        elif check == '.mp4':
+            facefilter.model.prepare(facebasepath + filter_name)
+            try:
+                self.close()
+            except Exception as e:
+                print("exception occured")
+                print(e)
 
     def cancel(self):
-        self.close()
+        try:
+            self.close()
+        except Exception as e:
+            print("exception occured")
+            print(e)
 
 
 if __name__ == "__main__":

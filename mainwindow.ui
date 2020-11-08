@@ -141,7 +141,7 @@ FILTER</string>
     </property>
     <property name="font">
      <font>
-      <family>210 M고딕OTF 070</family>
+      <family>210 구름고딕OTF 070</family>
       <pointsize>28</pointsize>
       <weight>50</weight>
       <bold>false</bold>
@@ -197,7 +197,7 @@ FILTER</string>
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../../Downloads/KakaoTalk_20201108_114524907_.png</pixmap>
+     <pixmap>logo.png</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
